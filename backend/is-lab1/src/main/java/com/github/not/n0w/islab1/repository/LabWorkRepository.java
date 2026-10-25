@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface LabWorkRepository extends CrudRepository<LabWork, Long> {
+public interface LabWorkRepository extends CrudRepository<LabWork, Integer> {
 
     @Query(value = "SELECT get_minimal_point_sum()", nativeQuery = true)
     Double getMinimalPointSum();

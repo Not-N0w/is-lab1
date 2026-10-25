@@ -25,20 +25,22 @@ public class LabWorkController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteLabWork(@PathVariable("id") Long id,
+    public void deleteLabWork(@PathVariable("id") Integer id,
                               @RequestParam(name = "strategy", defaultValue = "pass") String strategy) {
         log.info("Received delete request for lab work with id: {}", id);
         labWorkService.deleteLabWork(id, strategy.equals("delete"));
     }
 
     @PatchMapping("/update/{id}")
-    public void updateLabWork(@RequestBody LabWorkRequestDto labWorkReq, @PathVariable("id") Integer id) {
+    public void updateLabWork(@RequestBody LabWorkRequestDto labWorkReq,
+                              @PathVariable("id") Integer id,
+                              @RequestParam(defaultValue = "pass") String strategy) {
         log.info("Received update request for lab work with id: {}", id);
-        labWorkService.updateLabWork(labWorkReq, id);
+        labWorkService.updateLabWork(labWorkReq, id, "delete".equals(strategy));
     }
 
     @GetMapping("/get/{id}")
-    public LabWork getLabWorkById(@PathVariable("id") Long id) {
+    public LabWork getLabWorkById(@PathVariable("id") Integer id) {
         log.info("Received get request for lab work with id: {}", id);
         return labWorkService.getLabWorkById(id);
     }

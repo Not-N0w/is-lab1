@@ -9,7 +9,7 @@ import java.util.List;
 public interface PersonService {
     void createPerson(PersonRequestDto person);
     void deletePerson(Integer id, boolean isDeleteStrategy);
-    void updatePerson(PersonRequestDto person, Integer id);
+    void updatePerson(PersonRequestDto person, Integer id, boolean isDeleteStrategy);
 
     List<LabWork> getRelatedLabWorks(Integer id);
 

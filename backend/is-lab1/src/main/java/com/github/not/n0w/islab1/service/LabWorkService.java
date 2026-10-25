@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface LabWorkService {
     void createLabWork(LabWorkRequestDto labWork);
-    void deleteLabWork(Long id, boolean isDeleteStrategy);
-    void updateLabWork(LabWorkRequestDto labWork, Integer id);
+    void deleteLabWork(Integer id, boolean isDeleteStrategy);
+    void updateLabWork(LabWorkRequestDto labWork, Integer id, boolean isDeleteStrategy);
 
-    LabWork getLabWorkById(Long id);
+    LabWork getLabWorkById(Integer id);
     List<LabWork> getAllLabWorks();
 
     void addLabToDiscipline(Integer labId, Integer disciplineId);

@@ -25,9 +25,13 @@ public class PersonController {
         personService.createPerson(personRequestDto);
     }
 
+
+
     @PatchMapping("/update/{id}")
-    public void updatePerson(@RequestBody PersonRequestDto personRequestDto, @PathVariable("id") Integer id) {
-        personService.updatePerson(personRequestDto, id);
+    public void updatePerson(@RequestBody PersonRequestDto personRequestDto,
+                             @PathVariable("id") Integer id,
+                             @RequestParam(defaultValue = "pass") String strategy) {
+        personService.updatePerson(personRequestDto, id, "delete".equals(strategy));
     }
 
     @GetMapping("/get/{id}")

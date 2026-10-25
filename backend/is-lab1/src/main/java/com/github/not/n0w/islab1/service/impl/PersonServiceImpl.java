@@ -84,9 +84,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void updatePerson(PersonRequestDto person, Integer id) {
-
-        boolean isDeleteStrategy = Objects.equals(person.getStrategy(), "delete");
+    public void updatePerson(PersonRequestDto person, Integer id, boolean isDeleteStrategy) {
         Person personEntity = getPersonById(id);
 
         boolean isAnotherLocation = !Objects.equals(personEntity.getLocation().getId(), person.getLocationId());
