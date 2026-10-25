@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group = 'com.github.not.n0w'
+version = '0.0.1-SNAPSHOT'
+description = 'is-lab1'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly("org.projectlombok:lombok:1.18.48")
+    annotationProcessor("org.projectlombok:lombok:1.18.48")
+
+    implementation("org.springframework:spring-context:7.0.8")
+    implementation("org.springframework:spring-webmvc:7.0.8")
+    implementation("org.springframework:spring-core:7.0.8")
+
+    implementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
+
+    implementation("org.springframework.data:spring-data-commons:4.2.0-M2")
+    implementation("org.hibernate.orm:hibernate-core:7.4.11.Final")
+    implementation("org.springframework.data:spring-data-jpa:4.2.0-M2")
+
+    implementation("org.slf4j:slf4j-simple:2.0.18")
+
+    implementation("tools.jackson.core:jackson-databind:3.2.3")
+    implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+
+    implementation 'org.springframework.security:spring-security-core:7.2.0-M2'
+    implementation 'org.springframework.security:spring-security-web:7.2.0-M2'
+    implementation 'org.springframework.security:spring-security-config:7.2.0-M2'
+
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+}
