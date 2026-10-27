@@ -1,0 +1,28 @@
+<div class="outer">
+  <div class="content">
+    <div class="header">
+      <h2>{{ title() }} #{{ id() }}</h2>
+      <p-button label="Назад" icon="pi pi-arrow-left" severity="secondary" [text]="true" (onClick)="back()" />
+    </div>
+
+    @if (object(); as o) {
+      @if (hasStrategy()) {
+        <div class="strategy">
+          <span>Старые связанные объекты, на которые больше никто не ссылается:</span>
+          <p-selectbutton [options]="strategies" [(ngModel)]="strategy"
+                          optionLabel="label" optionValue="value" [allowEmpty]="false" />
+        </div>
+      }
+
+      @switch (entity()) {
+        @case ('lab-work') { <app-lab-work-form [initial]="o" (saved)="updateLabWork($event)" /> }
+        @case ('coordinates') { <app-coordinates-form [initial]="o" (saved)="updateCoordinates($event)" /> }
+        @case ('discipline') { <app-discipline-form [initial]="o" (saved)="updateDiscipline($event)" /> }
+        @case ('person') { <app-person-form [initial]="o" (saved)="updatePerson($event)" /> }
+        @case ('location') { <app-location-form [initial]="o" (saved)="updateLocation($event)" /> }
+      }
+    } @else {
+      <p>Loading...</p>
+    }
+  </div>
+</div>

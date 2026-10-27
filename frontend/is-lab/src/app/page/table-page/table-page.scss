@@ -1,0 +1,12 @@
+.page {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h2 { margin: 0; }
+}

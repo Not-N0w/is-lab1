@@ -1,0 +1,16 @@
+<div class="outer">
+  <div class="content">
+    <div class="header">
+      <h2>{{ title() }}</h2>
+      <p-button label="Назад" icon="pi pi-arrow-left" severity="secondary" [text]="true" (onClick)="back()" />
+    </div>
+
+    @switch (entity()) {
+      @case ('lab-work') { <app-lab-work-form submitLabel="Create" (saved)="createLabWork($event)" /> }
+      @case ('coordinates') { <app-coordinates-form submitLabel="Create" (saved)="createCoordinates($event)" /> }
+      @case ('discipline') { <app-discipline-form submitLabel="Create" (saved)="createDiscipline($event)" /> }
+      @case ('person') { <app-person-form submitLabel="Create" (saved)="createPerson($event)" /> }
+      @case ('location') { <app-location-form submitLabel="Create" (saved)="createLocation($event)" /> }
+    }
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
+  <div class="field">
+    <label>Name</label>
+    <input pInputText formControlName="name" />
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>X</label>
+      <input pInputText type="number" formControlName="x" />
+      @if (form.controls.x.touched && form.controls.x.invalid) {
+        <small class="error">X is required</small>
+      }
+    </div>
+
+    <div class="field">
+      <label>Y</label>
+      <input pInputText type="number" formControlName="y" />
+      @if (form.controls.y.touched && form.controls.y.invalid) {
+        <small class="error">Y is required</small>
+      }
+    </div>
+
+    <div class="field">
+      <label>Z</label>
+      <input pInputText type="number" formControlName="z" />
+      @if (form.controls.z.touched && form.controls.z.invalid) {
+        <small class="error">Z is required</small>
+      }
+    </div>
+  </div>
+
+  <div class="actions">
+    <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />
+  </div>
+</form>

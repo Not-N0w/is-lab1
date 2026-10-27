@@ -1,0 +1,65 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
+  <div class="field">
+    <label>Name</label>
+    <input pInputText formControlName="name" />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <small class="error">Name is required</small>
+    }
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Eye color</label>
+      <p-select formControlName="eyeColor" [options]="colors" placeholder="Not selected" appendTo="body" />
+    </div>
+
+    <div class="field">
+      <label>Hair color</label>
+      <p-select formControlName="hairColor" [options]="colors" [showClear]="true"
+                placeholder="Not selected" appendTo="body" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Height</label>
+      <input pInputText type="number" formControlName="height" />
+      @if (form.controls.height.touched && form.controls.height.invalid) {
+        <small class="error">Must be greater than 0</small>
+      }
+    </div>
+
+    <div class="field">
+      <label>Nationality</label>
+      <p-select formControlName="nationality" [options]="countries" [showClear]="true"
+                placeholder="Not selected" appendTo="body" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Location</label>
+    <div class="picker">
+      @if (form.controls.location.value; as l) {
+        <span class="value">{{ locationLabel(l) }}</span>
+      } @else {
+        <span class="value empty">Not selected</span>
+      }
+      <p-button icon="pi pi-list" [text]="true" (onClick)="existingLocationVisible.set(true)" />
+      <p-button icon="pi pi-plus" [text]="true" (onClick)="newLocationVisible.set(true)" />
+    </div>
+  </div>
+
+  <div class="actions">
+    <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />
+  </div>
+</form>
+
+<app-choose-existing-table type="location" [(visible)]="existingLocationVisible"
+                           (selected)="form.patchValue({ location: $event })" />
+
+<p-dialog header="New location" [modal]="true" appendTo="body"
+          [(visible)]="newLocationVisible" [style]="{ width: '500px' }">
+  @if (newLocationVisible()) {
+    <app-location-form submitLabel="Add" (saved)="setLocation($event)" />
+  }
+</p-dialog>

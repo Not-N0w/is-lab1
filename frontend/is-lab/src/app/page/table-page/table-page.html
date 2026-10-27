@@ -1,0 +1,14 @@
+<div class="page">
+  <div class="header">
+    <h2>{{ title() }}</h2>
+    <p-button label="Создать" icon="pi pi-plus" [routerLink]="['/' + entity(), 'create']" />
+  </div>
+
+  @switch (entity()) {
+    @case ('lab-work') { <app-lab-work-table /> }
+    @case ('coordinates') { <app-coordinates-table /> }
+    @case ('discipline') { <app-discipline-table /> }
+    @case ('person') { <app-person-table /> }
+    @case ('location') { <app-location-table /> }
+  }
+</div>

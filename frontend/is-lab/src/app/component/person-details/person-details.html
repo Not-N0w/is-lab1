@@ -1,0 +1,17 @@
+@let p = value();
+<dl>
+  <dt>ID</dt><dd>{{ p.id }}</dd>
+  <dt>Name</dt><dd>{{ p.name }}</dd>
+  <dt>Eye color</dt><dd>{{ p.eyeColor }}</dd>
+  <dt>Hair color</dt><dd>{{ p.hairColor ?? '—' }}</dd>
+  <dt>Height</dt><dd>{{ p.height }}</dd>
+  <dt>Nationality</dt><dd>{{ p.nationality ?? '—' }}</dd>
+</dl>
+
+<div class="section">
+  <div class="section-header">
+    <span>Location</span>
+    <a [routerLink]="['/location', p.location.id]">Open →</a>
+  </div>
+  <app-location-details [value]="p.location" />
+</div>

@@ -1,0 +1,26 @@
+<div class="body">
+  <p>Удалить «{{ target().name }}»?</p>
+
+  <p class="hint">Что сделать с локацией, если на неё больше никто не ссылается:</p>
+  <p-selectbutton [options]="strategies" [(ngModel)]="strategy"
+                  optionLabel="label" optionValue="value" [allowEmpty]="false" />
+
+  @if (related().length) {
+    <p class="hint">Выберите нового автора для связанных лабораторных:</p>
+    @if (!options().length) {
+      <p class="error">Нет других людей для замены. Сначала создайте нового.</p>
+    }
+    @for (lab of related(); track lab.id) {
+      <div class="replace-row">
+        <span>#{{ lab.id }} {{ lab.name }}</span>
+        <p-select [options]="options()" [(ngModel)]="replacements[lab.id!]"
+                  optionLabel="label" optionValue="id" placeholder="Замена" appendTo="body" [filter]="true" />
+      </div>
+    }
+  }
+
+  <div class="actions">
+    <p-button label="Отмена" severity="secondary" (onClick)="cancel.emit()" />
+    <p-button label="Удалить" severity="danger" [disabled]="!canDelete()" (onClick)="confirm()" />
+  </div>
+</div>

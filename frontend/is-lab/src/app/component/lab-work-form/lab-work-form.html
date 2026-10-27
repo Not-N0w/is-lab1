@@ -1,0 +1,109 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
+  <div class="field">
+    <label>Name</label>
+    <input pInputText formControlName="name" />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <small class="error">Name is required</small>
+    }
+  </div>
+
+  <div class="field">
+    <label>Difficulty</label>
+    <p-select formControlName="difficulty" [options]="difficulties" [showClear]="true"
+              placeholder="Not selected" appendTo="body" />
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Minimal point</label>
+      <input pInputText type="number" formControlName="minimalPoint" />
+      @if (form.controls.minimalPoint.touched && form.controls.minimalPoint.invalid) {
+        <small class="error">Must be greater than 0</small>
+      }
+    </div>
+
+    <div class="field">
+      <label>Tuned in works</label>
+      <input pInputText type="number" formControlName="tunedInWorks" />
+      @if (form.controls.tunedInWorks.touched && form.controls.tunedInWorks.invalid) {
+        <small class="error">Integer is required</small>
+      }
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Description</label>
+    <textarea pTextarea formControlName="description" rows="4"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Coordinates</label>
+    <div class="picker">
+      @if (form.controls.coordinates.value; as c) {
+        <span class="value">{{ label(c.id, '(' + c.x + ', ' + c.y + ')') }}</span>
+      } @else {
+        <span class="value empty">Not selected</span>
+      }
+      <p-button icon="pi pi-list" [text]="true" (onClick)="existingCoordinatesVisible.set(true)" />
+      <p-button icon="pi pi-plus" [text]="true" (onClick)="newCoordinatesVisible.set(true)" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Discipline</label>
+    <div class="picker">
+      @if (form.controls.discipline.value; as d) {
+        <span class="value">{{ label(d.id, d.name) }}</span>
+      } @else {
+        <span class="value empty">Not selected</span>
+      }
+      <p-button icon="pi pi-list" [text]="true" (onClick)="existingDisciplineVisible.set(true)" />
+      <p-button icon="pi pi-plus" [text]="true" (onClick)="newDisciplineVisible.set(true)" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Author</label>
+    <div class="picker">
+      @if (form.controls.author.value; as a) {
+        <span class="value">{{ label(a.id, a.name) }}</span>
+      } @else {
+        <span class="value empty">Not selected</span>
+      }
+      <p-button icon="pi pi-list" [text]="true" (onClick)="existingAuthorVisible.set(true)" />
+      <p-button icon="pi pi-plus" [text]="true" (onClick)="newAuthorVisible.set(true)" />
+    </div>
+  </div>
+
+  <div class="actions">
+    <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />
+  </div>
+</form>
+
+<app-choose-existing-table type="coordinates" [(visible)]="existingCoordinatesVisible"
+                           (selected)="form.patchValue({ coordinates: $event })" />
+<app-choose-existing-table type="discipline" [(visible)]="existingDisciplineVisible"
+                           (selected)="form.patchValue({ discipline: $event })" />
+<app-choose-existing-table type="person" [(visible)]="existingAuthorVisible"
+                           (selected)="form.patchValue({ author: $event })" />
+
+<p-dialog header="New coordinates" [modal]="true" appendTo="body"
+          [(visible)]="newCoordinatesVisible" [style]="{ width: '500px' }">
+  @if (newCoordinatesVisible()) {
+    <app-coordinates-form submitLabel="Add" (saved)="setCoordinates($event)" />
+  }
+</p-dialog>
+
+<p-dialog header="New discipline" [modal]="true" appendTo="body"
+          [(visible)]="newDisciplineVisible" [style]="{ width: '500px' }">
+  @if (newDisciplineVisible()) {
+    <app-discipline-form submitLabel="Add" (saved)="setDiscipline($event)" />
+  }
+</p-dialog>
+
+<p-dialog header="New author" [modal]="true" appendTo="body"
+          [(visible)]="newAuthorVisible" [style]="{ width: '600px' }">
+  @if (newAuthorVisible()) {
+    <app-person-form submitLabel="Add" (saved)="setAuthor($event)" />
+  }
+</p-dialog>

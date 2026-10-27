@@ -1,0 +1,86 @@
+<p-table [value]="labWorks()"
+         dataKey="id"
+         [tableStyle]="{ 'min-width': '60rem', 'table-layout': 'fixed' }"
+         [paginator]="true"
+         [rows]="10">
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="id" style="width:6%">
+        <div class="th">ID <p-sortIcon field="id" />
+          <p-columnFilter type="text" field="id" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="creationDate" style="width:14%">
+        <div class="th">Creation date <p-sortIcon field="creationDate" />
+          <p-columnFilter type="text" field="creationDateText" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="name" style="width:13%">
+        <div class="th">Name <p-sortIcon field="name" />
+          <p-columnFilter type="text" field="name" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="difficulty" style="width:11%">
+        <div class="th">Difficulty <p-sortIcon field="difficulty" />
+          <p-columnFilter type="text" field="difficulty" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="discipline.name" style="width:10%">
+        <div class="th">Discipline <p-sortIcon field="discipline.name" />
+          <p-columnFilter type="text" field="discipline.name" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="minimalPoint" style="width:11%">
+        <div class="th">Min point <p-sortIcon field="minimalPoint" />
+          <p-columnFilter type="text" field="minimalPoint" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="tunedInWorks" style="width:10%">
+        <div class="th">Tuned in <p-sortIcon field="tunedInWorks" />
+          <p-columnFilter type="text" field="tunedInWorks" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th pSortableColumn="author.name" style="width:10%">
+        <div class="th">Author <p-sortIcon field="author.name" />
+          <p-columnFilter type="text" field="author.name" display="menu" matchMode="exact"
+                          [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+        </div>
+      </th>
+      <th style="width:4%"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-lab>
+    <tr>
+      <td>{{ lab.id }}</td>
+      <td>{{ lab.creationDateText }}</td>
+      <td>{{ lab.name }}</td>
+      <td>
+        @if (lab.difficulty) {
+          <p-tag [severity]="difficultyTagSeverity(lab.difficulty)" [value]="lab.difficulty" />
+        } @else { — }
+      </td>
+      <td>{{ lab.discipline.name }}</td>
+      <td>{{ lab.minimalPoint }}</td>
+      <td>{{ lab.tunedInWorks }}</td>
+      <td>{{ lab.author?.name ?? '—' }}</td>
+      <td>
+        <p-button icon="pi pi-bars" [rounded]="true" [text]="true" (onClick)="menu.toggle($event)" />
+        <p-menu #menu [model]="lab.actions" [popup]="true" appendTo="body" />
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr><td colspan="9">Ничего не найдено</td></tr>
+  </ng-template>
+</p-table>
+
+<app-delete-window entity="lab-work" [target]="deleteTarget()" [(visible)]="deleteVisible" (deleted)="reload()" />

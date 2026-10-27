@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
+  <div class="row">
+    <div class="field">
+      <label>X</label>
+      <input pInputText type="number" formControlName="x" />
+      @if (form.controls.x.touched && form.controls.x.invalid) {
+        <small class="error">Integer greater than -212</small>
+      }
+    </div>
+
+    <div class="field">
+      <label>Y</label>
+      <input pInputText type="number" formControlName="y" />
+      @if (form.controls.y.touched && form.controls.y.invalid) {
+        <small class="error">Integer is required</small>
+      }
+    </div>
+  </div>
+
+  <div class="actions">
+    <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />
+  </div>
+</form>

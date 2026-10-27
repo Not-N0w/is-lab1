@@ -1,0 +1,14 @@
+<div style="height: 100%; width: 96%; margin: 2%;">
+  @if (authService.isAuthenticated()) {
+    <p-menubar [model]="items">
+      <ng-template #end>
+        <div class="user">
+          <i class="pi pi-user"></i>
+          <span>{{ authService.username() }}</span>
+          <p-button label="Выйти" icon="pi pi-sign-out" severity="secondary" [text]="true" (onClick)="logout()" />
+        </div>
+      </ng-template>
+    </p-menubar>
+  }
+  <router-outlet />
+</div>

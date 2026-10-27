@@ -1,0 +1,35 @@
+dl {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  row-gap: 8px;
+  margin: 0;
+}
+
+dt { color: #818080; }
+dd { margin: 0; }
+
+.section {
+  border: 1px solid #818080;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-top: 15px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #818080;
+
+  a {
+    color: var(--p-primary-color);
+    text-decoration: none;
+  }
+}
+
+.empty {
+  margin: 0;
+  color: #818080;
+}

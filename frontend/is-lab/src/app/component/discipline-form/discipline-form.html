@@ -1,0 +1,21 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
+  <div class="field">
+    <label>Name</label>
+    <input pInputText formControlName="name" />
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <small class="error">Name is required</small>
+    }
+  </div>
+
+  <div class="field">
+    <label>Practice hours</label>
+    <input pInputText type="number" formControlName="practiceHours" />
+    @if (form.controls.practiceHours.touched && form.controls.practiceHours.invalid) {
+      <small class="error">Must be an integer</small>
+    }
+  </div>
+
+  <div class="actions">
+    <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />
+  </div>
+</form>

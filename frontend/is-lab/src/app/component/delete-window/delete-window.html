@@ -1,0 +1,21 @@
+<p-dialog header="Удаление" [modal]="true" appendTo="body" [(visible)]="visible" [style]="{ width: '600px' }">
+  @if (visible() && target(); as t) {
+    @switch (entity()) {
+      @case ('lab-work') {
+        <app-delete-lab-work [target]="t" (deleted)="done()" (cancel)="visible.set(false)" />
+      }
+      @case ('coordinates') {
+        <app-delete-coordinates [target]="t" (deleted)="done()" (cancel)="visible.set(false)" />
+      }
+      @case ('discipline') {
+        <app-delete-discipline [target]="t" (deleted)="done()" (cancel)="visible.set(false)" />
+      }
+      @case ('location') {
+        <app-delete-location [target]="t" (deleted)="done()" (cancel)="visible.set(false)" />
+      }
+      @case ('person') {
+        <app-delete-person [target]="t" (deleted)="done()" (cancel)="visible.set(false)" />
+      }
+    }
+  }
+</p-dialog>

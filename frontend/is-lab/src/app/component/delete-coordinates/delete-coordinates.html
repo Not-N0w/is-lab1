@@ -1,0 +1,22 @@
+<div class="body">
+  <p>Удалить координаты #{{ target().id }} ({{ target().x }}, {{ target().y }})?</p>
+
+  @if (related().length) {
+    <p class="hint">Выберите замену для связанных лабораторных:</p>
+    @if (!options().length) {
+      <p class="error">Нет других координат для замены. Сначала создайте новые.</p>
+    }
+    @for (lab of related(); track lab.id) {
+      <div class="replace-row">
+        <span>#{{ lab.id }} {{ lab.name }}</span>
+        <p-select [options]="options()" [(ngModel)]="replacements[lab.id!]"
+                  optionLabel="label" optionValue="id" placeholder="Замена" appendTo="body" [filter]="true" />
+      </div>
+    }
+  }
+
+  <div class="actions">
+    <p-button label="Отмена" severity="secondary" (onClick)="cancel.emit()" />
+    <p-button label="Удалить" severity="danger" [disabled]="!canDelete()" (onClick)="confirm()" />
+  </div>
+</div>

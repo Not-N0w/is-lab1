@@ -1,0 +1,30 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+p { margin: 0; }
+
+.hint {
+  font-size: 13px;
+  color: #818080;
+}
+
+.replace-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  p-select { width: 260px; }
+}
+
+.error { color: var(--p-red-500); }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}

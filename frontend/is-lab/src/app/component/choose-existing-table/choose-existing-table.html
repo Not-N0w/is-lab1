@@ -1,0 +1,36 @@
+<p-dialog [header]="'Choose existing ' + type()" [modal]="true" appendTo="body"
+          [(visible)]="visible" (onShow)="load()" [style]="{ width: '90vw', height: '90vh' }">
+  <p-table [value]="objects()" dataKey="id" [tableStyle]="{ 'table-layout': 'fixed' }"
+           [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        @for (col of columns; track col) {
+          <th [pSortableColumn]="field(col)">
+            <div class="th">{{ col }} <p-sortIcon [field]="field(col)" />
+              <p-columnFilter type="text" [field]="field(col)" display="menu" matchMode="exact"
+                              [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" />
+            </div>
+          </th>
+        }
+        <th style="width: 4rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-object>
+      <tr>
+        @for (col of columns; track col) {
+          @if (col === 'location') {
+            <td>{{ object.location.name ?? '—' }} ({{ object.location.x }}, {{ object.location.y }}, {{ object.location.z }})</td>
+          } @else {
+            <td>{{ object[col] ?? '—' }}</td>
+          }
+        }
+        <td><p-button icon="pi pi-check" [rounded]="true" [text]="true" (onClick)="choose(object)" /></td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr><td [attr.colspan]="columns.length + 1">Ничего не найдено</td></tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

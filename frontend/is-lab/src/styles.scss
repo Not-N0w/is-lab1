@@ -1,0 +1,13 @@
+@import "primeicons/primeicons.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400&display=swap');
+
+body {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  font-weight: 100;
+}
+
+:root {
+  --p-font-family: 'Roboto Mono', monospace;
+}

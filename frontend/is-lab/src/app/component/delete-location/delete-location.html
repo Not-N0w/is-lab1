@@ -1,0 +1,22 @@
+<div class="body">
+  <p>Удалить локацию #{{ target().id }} {{ target().name ?? '' }}?</p>
+
+  @if (related().length) {
+    <p class="hint">Выберите замену для связанных людей:</p>
+    @if (!options().length) {
+      <p class="error">Нет других локаций для замены. Сначала создайте новую.</p>
+    }
+    @for (p of related(); track p.id) {
+      <div class="replace-row">
+        <span>#{{ p.id }} {{ p.name }}</span>
+        <p-select [options]="options()" [(ngModel)]="replacements[p.id!]"
+                  optionLabel="label" optionValue="id" placeholder="Замена" appendTo="body" [filter]="true" />
+      </div>
+    }
+  }
+
+  <div class="actions">
+    <p-button label="Отмена" severity="secondary" (onClick)="cancel.emit()" />
+    <p-button label="Удалить" severity="danger" [disabled]="!canDelete()" (onClick)="confirm()" />
+  </div>
+</div>

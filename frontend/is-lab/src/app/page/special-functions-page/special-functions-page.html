@@ -1,0 +1,58 @@
+<div class="page">
+  <h1>Special operations</h1>
+
+  <ng-template #statusTpl let-s>
+    @if (s) { <p [class]="s.ok ? 'success' : 'error'">{{ s.text }}</p> }
+  </ng-template>
+
+  <section>
+    <h3>Сумма minimalPoint</h3>
+    <p-button label="Рассчитать" (onClick)="loadSum()" />
+    @if (sum() !== null) { <p>Сумма: <b>{{ sum() }}</b></p> }
+    <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['sum'] }" />
+  </section>
+
+  <section>
+    <h3>Группировка по minimalPoint</h3>
+    <p-button label="Сгруппировать" (onClick)="loadGroups()" />
+    @if (groups(); as g) {
+      <table>
+        <tr><th>minimalPoint</th><th>Количество</th></tr>
+        @for (row of g; track row.minimalPoints) {
+          <tr><td>{{ row.minimalPoints }}</td><td>{{ row.count }}</td></tr>
+        }
+      </table>
+    }
+    <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['groups'] }" />
+  </section>
+
+  <section>
+    <h3>Уникальные авторы</h3>
+    <p-button label="Показать" (onClick)="loadAuthors()" />
+    @if (authors(); as a) {
+      <ul>
+        @for (id of a; track id) { <li>Автор #{{ id }}</li> } @empty { <li>Авторов нет</li> }
+      </ul>
+    }
+    <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['authors'] }" />
+  </section>
+
+  <section>
+    <h3>Добавить лабораторную в программу дисциплины</h3>
+    <div class="inputs">
+      <input pInputText type="number" placeholder="ID лабораторной" [(ngModel)]="labId" />
+      <input pInputText type="number" placeholder="ID дисциплины" [(ngModel)]="disciplineId" />
+      <p-button label="Добавить" [disabled]="!labId || !disciplineId" (onClick)="addLab()" />
+    </div>
+    <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['addLab'] }" />
+  </section>
+
+  <section>
+    <h3>Добавить 10 самых сложных лабораторных в дисциплину</h3>
+    <div class="inputs">
+      <input pInputText type="number" placeholder="ID дисциплины" [(ngModel)]="topDisciplineId" />
+      <p-button label="Добавить" [disabled]="!topDisciplineId" (onClick)="addTop()" />
+    </div>
+    <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['addTop'] }" />
+  </section>
+</div>

@@ -1,0 +1,45 @@
+@let lw = value();
+<dl>
+  <dt>ID</dt><dd>{{ lw.id }}</dd>
+  <dt>Name</dt><dd>{{ lw.name }}</dd>
+  <dt>Creation date</dt><dd>{{ lw.creationDate | date: 'dd.MM.yyyy HH:mm:ss' }}</dd>
+  <dt>Difficulty</dt>
+  <dd>
+    @if (lw.difficulty) {
+      <p-tag [value]="lw.difficulty" [severity]="severity(lw.difficulty)" />
+    } @else { — }
+  </dd>
+  <dt>Minimal point</dt><dd>{{ lw.minimalPoint }}</dd>
+  <dt>Tuned in works</dt><dd>{{ lw.tunedInWorks }}</dd>
+  <dt>Description</dt><dd>{{ lw.description ?? '—' }}</dd>
+</dl>
+
+<div class="section">
+  <div class="section-header">
+    <span>Coordinates</span>
+    <a [routerLink]="['/coordinates', lw.coordinates.id]">Open →</a>
+  </div>
+  <app-coordinates-details [value]="lw.coordinates" />
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span>Discipline</span>
+    <a [routerLink]="['/discipline', lw.discipline.id]">Open →</a>
+  </div>
+  <app-discipline-details [value]="lw.discipline" />
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span>Author</span>
+    @if (lw.author) {
+      <a [routerLink]="['/person', lw.author.id]">Open →</a>
+    }
+  </div>
+  @if (lw.author; as a) {
+    <app-person-details [value]="a" />
+  } @else {
+    <p class="empty">Not specified</p>
+  }
+</div>

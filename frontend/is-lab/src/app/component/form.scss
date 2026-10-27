@@ -1,0 +1,63 @@
+.entity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .row {
+    display: flex;
+    gap: 20px;
+
+    > .field { flex: 1; }
+  }
+
+  label {
+    font-size: 12px;
+    padding-left: 5px;
+    color: #818080;
+  }
+
+  input,
+  textarea,
+  p-select {
+    width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 5rem;
+    max-height: 10rem;
+  }
+
+  .picker {
+    display: flex;
+    align-items: center;
+    border: 1px solid #818080;
+    border-radius: 5px;
+    padding-left: 10px;
+
+    .value {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .empty { color: #818080; }
+  }
+
+  .error {
+    color: var(--p-red-500);
+    font-size: 12px;
+    padding-left: 5px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+}

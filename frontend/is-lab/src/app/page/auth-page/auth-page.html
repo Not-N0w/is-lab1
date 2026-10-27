@@ -1,0 +1,15 @@
+<div class="auth">
+  <h2>Вход</h2>
+
+  <input pInputText placeholder="Логин" [(ngModel)]="username" />
+  <p-password placeholder="Пароль" [(ngModel)]="password" [feedback]="false" [toggleMask]="true" />
+
+  @if (error()) {
+    <p-message severity="error">{{ error() }}</p-message>
+  }
+
+  <div class="buttons">
+    <p-button label="Войти" (onClick)="login()" [disabled]="!username || !password" />
+    <p-button label="Регистрация" severity="secondary" (onClick)="register()" [disabled]="!username || !password" />
+  </div>
+</div>
