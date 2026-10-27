@@ -32,4 +32,8 @@ public interface LabWorkRepository extends CrudRepository<LabWork, Integer> {
     List<LabWork> findAllByAuthor_Id(Integer authorId);
     List<LabWork> findAllByDiscipline_Id(Integer disciplineId);
     List<LabWork> findAllByCoordinates_Id(Integer coordinatesId);
+
+    boolean existsLabWorkByCoordinates_Id(Integer coordinatesId);
+    boolean existsLabWorkByDiscipline_Id(Integer disciplineId);
+    boolean existsLabWorkByAuthor_Id(Integer authorId);
 }

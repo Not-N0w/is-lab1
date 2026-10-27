@@ -3,6 +3,8 @@ package com.github.not.n0w.islab1.controller;
 import com.github.not.n0w.islab1.model.core.Location;
 import com.github.not.n0w.islab1.model.dto.LocationRequestDto;
 import com.github.not.n0w.islab1.service.LocationService;
+import com.github.not.n0w.islab1.service.WebSocketService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +23,12 @@ public class LocationController {
     }
 
     @PostMapping("/create")
-    public void createLocation(@RequestBody LocationRequestDto locationDto) {
+    public void createLocation(@Valid @RequestBody LocationRequestDto locationDto) {
         locationService.createLocation(locationDto);
     }
 
     @PatchMapping("/update/{id}")
-    public void updateLocation(@RequestBody LocationRequestDto locationDto, @PathVariable("id") Integer id) {
+    public void updateLocation(@Valid @RequestBody LocationRequestDto locationDto, @PathVariable("id") Integer id) {
         locationService.updateLocation(locationDto, id);
     }
 
@@ -35,7 +37,7 @@ public class LocationController {
         locationService.deleteLocation(id);
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public Location getLocationById(@PathVariable("id") Integer id) {
         return locationService.getLocationById(id);
     }

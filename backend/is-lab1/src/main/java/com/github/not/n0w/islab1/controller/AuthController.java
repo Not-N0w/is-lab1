@@ -6,16 +6,17 @@ import com.github.not.n0w.islab1.model.dto.AuthResponse;
 import com.github.not.n0w.islab1.model.dto.RefreshRequest;
 import com.github.not.n0w.islab1.service.AuthService;
 import com.github.not.n0w.islab1.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.LoginException;
+import java.security.Principal;
 
-@Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
@@ -23,36 +24,24 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/public/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-
-        try {
-            var response = authService.authenticate(authRequest.getUsername(), authRequest.getPassword());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public AuthResponse login(@Valid @RequestBody AuthRequest req) {
+        return authService.authenticate(req.getUsername(), req.getPassword());
     }
 
     @PostMapping("/public/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody AuthRequest req) {
-        UserEntity user = userService.addUser(req.getUsername(), req.getPassword());
-        var response = authService.authenticate(user.getUsername(), user.getPasswordHash());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthResponse register(@Valid @RequestBody AuthRequest req) {
+        userService.addUser(req.getUsername(), req.getPassword());
+        return authService.authenticate(req.getUsername(), req.getPassword());
     }
 
     @PostMapping("/public/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest refreshRequest) {
-        try {
-            return ResponseEntity.ok().body(
-                    new AuthResponse(
-                            authService.refreshToken(refreshRequest.getRefreshToken()),
-                            refreshRequest.getRefreshToken()
-                    )
-            );
-        } catch (Exception e) {
-            log.error("Error refreshing token: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+    public AuthResponse refresh(@Valid @RequestBody RefreshRequest req) {
+        return new AuthResponse(authService.refreshToken(req.getRefreshToken()), req.getRefreshToken());
+    }
+
+    @GetMapping("/name")
+    public String name(Principal principal) {
+        return principal.getName();
     }
 }

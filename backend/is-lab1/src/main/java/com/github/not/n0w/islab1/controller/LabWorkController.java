@@ -4,6 +4,8 @@ import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.MinimalPointGroup;
 import com.github.not.n0w.islab1.model.dto.LabWorkRequestDto;
 import com.github.not.n0w.islab1.service.LabWorkService;
+import com.github.not.n0w.islab1.service.WebSocketService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class LabWorkController {
     private final LabWorkService labWorkService;
 
     @PostMapping("/create")
-    public void createLabWork(@RequestBody LabWorkRequestDto labWork) {
+    public void createLabWork(@Valid @RequestBody LabWorkRequestDto labWork) {
         log.info("Received create request for lab work: {}", labWork);
         labWorkService.createLabWork(labWork);
     }
@@ -32,14 +34,14 @@ public class LabWorkController {
     }
 
     @PatchMapping("/update/{id}")
-    public void updateLabWork(@RequestBody LabWorkRequestDto labWorkReq,
+    public void updateLabWork(@Valid @RequestBody LabWorkRequestDto labWorkReq,
                               @PathVariable("id") Integer id,
-                              @RequestParam(defaultValue = "pass") String strategy) {
+                              @RequestParam(name = "strategy", defaultValue = "pass") String strategy) {
         log.info("Received update request for lab work with id: {}", id);
         labWorkService.updateLabWork(labWorkReq, id, "delete".equals(strategy));
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public LabWork getLabWorkById(@PathVariable("id") Integer id) {
         log.info("Received get request for lab work with id: {}", id);
         return labWorkService.getLabWorkById(id);
@@ -85,8 +87,18 @@ public class LabWorkController {
         labWorkService.addTopLabsToDiscipline(disciplineId);
     }
 
-    @GetMapping("/ping")
-    public String ping() {
-        return "pong";
+    @GetMapping("/by-coordinates")
+    public List<LabWork> getLabWorksByCoordinates(@RequestParam("coordinatesId") Integer coordinatesId) {
+        return labWorkService.getAllByCoordinatesId(coordinatesId);
+    }
+
+    @GetMapping("/by-author")
+    public List<LabWork> getLabWorksByAuthor(@RequestParam("authorId") Integer authorId) {
+        return labWorkService.getAllByAuthorId(authorId);
+    }
+
+    @GetMapping("/by-discipline")
+    public List<LabWork> getLabWorksByDiscipline(@RequestParam("disciplineId") Integer disciplineId) {
+        return labWorkService.getAllByDisciplineId(disciplineId);
     }
 }

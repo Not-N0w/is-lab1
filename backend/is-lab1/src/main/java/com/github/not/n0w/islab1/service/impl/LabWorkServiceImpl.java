@@ -1,5 +1,6 @@
 package com.github.not.n0w.islab1.service.impl;
 
+import com.github.not.n0w.islab1.exception.NotFoundException;
 import com.github.not.n0w.islab1.model.*;
 import com.github.not.n0w.islab1.model.core.Coordinates;
 import com.github.not.n0w.islab1.model.core.Discipline;
@@ -7,29 +8,31 @@ import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.core.Person;
 import com.github.not.n0w.islab1.model.dto.LabWorkRequestDto;
 import com.github.not.n0w.islab1.repository.LabWorkRepository;
-import com.github.not.n0w.islab1.service.CoordinatesService;
-import com.github.not.n0w.islab1.service.DisciplineService;
-import com.github.not.n0w.islab1.service.LabWorkService;
-import com.github.not.n0w.islab1.service.PersonService;
+import com.github.not.n0w.islab1.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class LabWorkServiceImpl implements LabWorkService {
     private final LabWorkRepository labWorkRepository;
-
     private final PersonService personService;
     private final DisciplineService disciplineService;
     private final CoordinatesService coordinatesService;
 
+
     private LabWork mapLabWorkRequestDtoToLabWork(LabWorkRequestDto labWorkDto) {
-        Person author = labWorkDto.isNewAuthor()
-                ? labWorkDto.getAuthor()
-                : personService.getPersonById(labWorkDto.getAuthorId());
+        Person author = null;
+        if (labWorkDto.getAuthor() != null) {
+            author = labWorkDto.getAuthor();
+        } else if (labWorkDto.getAuthorId() != null) {
+            author = personService.getPersonById(labWorkDto.getAuthorId());
+        }
 
         Discipline discipline = labWorkDto.isNewDiscipline()
                 ? labWorkDto.getDiscipline()
@@ -77,52 +80,62 @@ public class LabWorkServiceImpl implements LabWorkService {
     @Override
     @Transactional
     public void deleteLabWork(Integer id, boolean isDeleteStrategy) {
-        if(isDeleteStrategy) {
-            LabWork labWork = labWorkRepository.findById(id).orElse(null);
-            if(labWork != null) {
-                if(isCoordinatesRetained(id, labWork.getCoordinates().getId())) {
-                    coordinatesService.deleteCoordinates(labWork.getCoordinates().getId());
-                }
-                if(isDisciplineRetained(id, labWork.getDiscipline().getId())) {
-                    disciplineService.deleteDiscipline(labWork.getDiscipline().getId());
-                }
-                if(isAuthorRetained(id, labWork.getAuthor().getId())) {
-                    personService.deletePerson(labWork.getAuthor().getId(), isDeleteStrategy);
-                }
-            }
+        LabWork labWork = getLabWorkById(id);
+        Coordinates coordinates = labWork.getCoordinates();
+        Discipline discipline = labWork.getDiscipline();
+        Person author = labWork.getAuthor();
+
+        boolean deleteCoordinates = isDeleteStrategy && isCoordinatesRetained(id, coordinates.getId());
+        boolean deleteDiscipline = isDeleteStrategy && isDisciplineRetained(id, discipline.getId());
+        boolean deleteAuthor = isDeleteStrategy && author != null && isAuthorRetained(id, author.getId());
+
+        labWorkRepository.delete(labWork);
+
+        if (deleteCoordinates) {
+            coordinatesService.deleteCoordinates(coordinates.getId());
         }
-        labWorkRepository.deleteById(id);
+        if (deleteDiscipline) {
+            disciplineService.deleteDiscipline(discipline.getId());
+        }
+        if (deleteAuthor) {
+            personService.deletePerson(author.getId(), true);
+        }
     }
 
     @Override
+    @Transactional
     public void updateLabWork(LabWorkRequestDto labWorkDto, Integer id, boolean isDeleteStrategy) {
-        if(isDeleteStrategy) {
-            LabWork labWork = labWorkRepository.findById(id).orElse(null);
-            if(labWork != null) {
-                boolean isAnotherCoordinates = !labWork.getCoordinates().getId().equals(labWorkDto.getCoordinatesId());
-                boolean isAnotherDiscipline = !labWork.getDiscipline().getId().equals(labWorkDto.getDisciplineId());
-                boolean isAnotherAuthor = !labWork.getAuthor().getId().equals(labWorkDto.getAuthorId());
-
-                if(isAnotherCoordinates && isCoordinatesRetained(id, labWork.getCoordinates().getId())) {
-                    coordinatesService.deleteCoordinates(labWork.getCoordinates().getId());
-                }
-                if(isAnotherDiscipline && isDisciplineRetained(id, labWork.getDiscipline().getId())) {
-                    disciplineService.deleteDiscipline(labWork.getDiscipline().getId());
-                }
-                if(isAnotherAuthor && isAuthorRetained(id, labWork.getAuthor().getId())) {
-                    personService.deletePerson(labWork.getAuthor().getId(), true);
-                }
-            }
-        }
+        LabWork oldLabWork = getLabWorkById(id);
+        Coordinates oldCoordinates = oldLabWork.getCoordinates();
+        Discipline oldDiscipline = oldLabWork.getDiscipline();
+        Person oldAuthor = oldLabWork.getAuthor();
 
         LabWork labWork = mapLabWorkRequestDtoToLabWork(labWorkDto);
         labWork.setId(id);
-        labWorkRepository.save(labWork);
-    }
+        labWork.setCreationDate(oldLabWork.getCreationDate());
+        labWork = labWorkRepository.save(labWork);
 
+        if (isDeleteStrategy) {
+            boolean isAnotherCoordinates = !Objects.equals(oldCoordinates.getId(), labWork.getCoordinates().getId());
+            boolean isAnotherDiscipline = !Objects.equals(oldDiscipline.getId(), labWork.getDiscipline().getId());
+            boolean isAnotherAuthor = oldAuthor != null
+                    && (labWork.getAuthor() == null || !Objects.equals(oldAuthor.getId(), labWork.getAuthor().getId()));
+
+            if (isAnotherCoordinates && coordinatesService.getRelatedLabWorks(oldCoordinates.getId()).isEmpty()) {
+                coordinatesService.deleteCoordinates(oldCoordinates.getId());
+            }
+            if (isAnotherDiscipline && disciplineService.getRelatedLabWorks(oldDiscipline.getId()).isEmpty()) {
+                disciplineService.deleteDiscipline(oldDiscipline.getId());
+            }
+            if (isAnotherAuthor && personService.getRelatedLabWorks(oldAuthor.getId()).isEmpty()) {
+                personService.deletePerson(oldAuthor.getId(), true);
+            }
+        }
+    }
     @Override
     public LabWork getLabWorkById(Integer id) {
-        return labWorkRepository.findById(id).orElse(null);
+        return labWorkRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("LabWork with id=" + id + " not found"));
     }
 
     @Override
@@ -131,12 +144,17 @@ public class LabWorkServiceImpl implements LabWorkService {
     }
 
     @Override
+    @Transactional
     public void addLabToDiscipline(Integer labId, Integer disciplineId) {
+        getLabWorkById(labId);
+        disciplineService.getDisciplineById(disciplineId);
         labWorkRepository.addLabToDiscipline(labId, disciplineId);
     }
 
     @Override
+    @Transactional
     public void addTopLabsToDiscipline(Integer disciplineId) {
+        disciplineService.getDisciplineById(disciplineId);
         labWorkRepository.addTopLabsToDiscipline(disciplineId);
     }
 

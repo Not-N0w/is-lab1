@@ -1,32 +1,30 @@
 package com.github.not.n0w.islab1.service.impl;
 
+import com.github.not.n0w.islab1.exception.ConflictException;
+import com.github.not.n0w.islab1.exception.NotFoundException;
 import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.core.Location;
 import com.github.not.n0w.islab1.model.core.Person;
 import com.github.not.n0w.islab1.model.dto.PersonRequestDto;
 import com.github.not.n0w.islab1.repository.LabWorkRepository;
 import com.github.not.n0w.islab1.repository.PersonRepository;
-import com.github.not.n0w.islab1.service.LabWorkService;
 import com.github.not.n0w.islab1.service.LocationService;
 import com.github.not.n0w.islab1.service.PersonService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
     private final LabWorkRepository labWorkRepository;
-
     private final LocationService locationService;
 
     @Override
+    @Transactional
     public void createPerson(PersonRequestDto personDto) {
         Location location = personDto.isNewLocation()
                 ? personDto.getLocation()
@@ -43,6 +41,7 @@ public class PersonServiceImpl implements PersonService {
 
         personRepository.save(person);
     }
+
     @Override
     public List<Person> getAllPersons() {
         return (List<Person>) personRepository.findAll();
@@ -51,7 +50,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person getPersonById(Integer id) {
         return personRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Person with id=" + id + " not found")
+                () -> new NotFoundException("Person with id=" + id + " not found")
         );
     }
 
@@ -69,16 +68,15 @@ public class PersonServiceImpl implements PersonService {
     @Transactional
     public void deletePerson(Integer id, boolean isDeleteStrategy) {
         Person person = getPersonById(id);
-        boolean isLocationRetained = isLocationRetained(id, person.getLocation().getId());
-        if (isDeleteStrategy && isLocationRetained) {
-            locationService.deleteLocation(person.getLocation().getId());
+        if (!labWorkRepository.findAllByAuthor_Id(id).isEmpty()) {
+            throw new ConflictException("Person with id=" + id + " is an author of lab works. Reassign them first");
         }
 
-        try {
-            personRepository.deleteById(id);
-        } catch (Exception e) {
-            log.error("Cannot delete person with id: {}", id);
-            log.error("Error message: {}", e.getMessage());
+        boolean isLocationRetained = isLocationRetained(id, person.getLocation().getId());
+
+        personRepository.delete(person);
+        if (isDeleteStrategy && isLocationRetained) {
+            locationService.deleteLocation(person.getLocation().getId());
         }
     }
 
@@ -86,12 +84,7 @@ public class PersonServiceImpl implements PersonService {
     @Transactional
     public void updatePerson(PersonRequestDto person, Integer id, boolean isDeleteStrategy) {
         Person personEntity = getPersonById(id);
-
-        boolean isAnotherLocation = !Objects.equals(personEntity.getLocation().getId(), person.getLocationId());
-
-        if(isAnotherLocation && isDeleteStrategy && isLocationRetained(id, person.getLocationId())) {
-            locationService.deleteLocation(personEntity.getLocation().getId());
-        }
+        Location oldLocation = personEntity.getLocation();
 
         Location location = person.isNewLocation()
                 ? person.getLocation()
@@ -104,6 +97,11 @@ public class PersonServiceImpl implements PersonService {
         personEntity.setNationality(person.getNationality());
         personEntity.setHeight(person.getHeight());
         personRepository.save(personEntity);
+
+        boolean isAnotherLocation = !Objects.equals(oldLocation.getId(), location.getId());
+        if (isDeleteStrategy && isAnotherLocation && getPersonsByLocationId(oldLocation.getId()).isEmpty()) {
+            locationService.deleteLocation(oldLocation.getId());
+        }
     }
 
     @Override

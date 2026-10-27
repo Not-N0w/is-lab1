@@ -1,8 +1,11 @@
 package com.github.not.n0w.islab1.controller;
 
 import com.github.not.n0w.islab1.model.core.Coordinates;
+import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.dto.CoordinatesRequestDto;
 import com.github.not.n0w.islab1.service.CoordinatesService;
+import com.github.not.n0w.islab1.service.WebSocketService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +24,12 @@ public class CoordinatesController {
     }
 
     @PostMapping("/create")
-    public void createCoordinates(@RequestBody CoordinatesRequestDto coordinatesDto) {
+    public void createCoordinates(@Valid @RequestBody CoordinatesRequestDto coordinatesDto) {
         coordinatesService.createCoordinates(coordinatesDto);
     }
 
     @PatchMapping("/update/{id}")
-    public void updateCoordinates(@RequestBody CoordinatesRequestDto coordinatesDto, @PathVariable("id") Integer id) {
+    public void updateCoordinates(@Valid @RequestBody CoordinatesRequestDto coordinatesDto, @PathVariable("id") Integer id) {
         coordinatesService.updateCoordinates(coordinatesDto, id);
     }
 
@@ -35,8 +38,9 @@ public class CoordinatesController {
         coordinatesService.deleteCoordinates(id);
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public Coordinates getCoordinatesById(@PathVariable("id") Integer id) {
         return coordinatesService.getCoordinatesById(id);
     }
+
 }

@@ -1,5 +1,7 @@
 package com.github.not.n0w.islab1.service.impl;
 
+import com.github.not.n0w.islab1.exception.ConflictException;
+import com.github.not.n0w.islab1.exception.NotFoundException;
 import com.github.not.n0w.islab1.model.core.Discipline;
 import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.dto.DisciplineRequestDto;
@@ -7,34 +9,34 @@ import com.github.not.n0w.islab1.repository.DisciplineRepository;
 import com.github.not.n0w.islab1.repository.LabWorkRepository;
 import com.github.not.n0w.islab1.service.DisciplineService;
 import com.github.not.n0w.islab1.service.LabWorkService;
+import com.github.not.n0w.islab1.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class DisciplineServiceImpl implements DisciplineService {
     private final DisciplineRepository disciplineRepository;
     private final LabWorkRepository labWorkRepository;
 
     @Override
-    public void createDiscipline(DisciplineRequestDto disciplineDto) {
+    @Transactional
+    public void createDiscipline(DisciplineRequestDto dto) {
         Discipline discipline = Discipline.builder()
-                .name(disciplineDto.getName())
-                .practiceHours(disciplineDto.getPracticeHours())
+                .name(dto.getName())
+                .practiceHours(dto.getPracticeHours())
                 .build();
-
         disciplineRepository.save(discipline);
     }
 
     @Override
     public Discipline getDisciplineById(Integer id) {
         return disciplineRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Discipline with id=" + id + " not found")
-        );
+                () -> new NotFoundException("Discipline with id=" + id + " not found"));
     }
 
     @Override
@@ -48,20 +50,20 @@ public class DisciplineServiceImpl implements DisciplineService {
     }
 
     @Override
+    @Transactional
     public void deleteDiscipline(Integer id) {
-        try {
-            disciplineRepository.deleteById(id);
-        } catch (Exception e) {
-            log.error("Cannot delete discipline with id: {}", id);
-            log.error("Error message: {}", e.getMessage());
+        Discipline discipline = getDisciplineById(id);
+        if (labWorkRepository.existsLabWorkByDiscipline_Id(id)) {
+            throw new ConflictException("Discipline with id=" + id + " is used by lab works. Reassign them first");
         }
+        disciplineRepository.delete(discipline);
     }
 
     @Override
-    public void updateDiscipline(DisciplineRequestDto discipline, Integer id) {
-        Discipline disciplineEntity = getDisciplineById(id);
-        disciplineEntity.setName(discipline.getName());
-        disciplineEntity.setPracticeHours(discipline.getPracticeHours());
-        disciplineRepository.save(disciplineEntity);
+    @Transactional
+    public void updateDiscipline(DisciplineRequestDto dto, Integer id) {
+        Discipline discipline = getDisciplineById(id);
+        discipline.setName(dto.getName());
+        discipline.setPracticeHours(dto.getPracticeHours());
     }
 }
