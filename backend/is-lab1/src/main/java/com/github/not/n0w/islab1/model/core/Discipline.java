@@ -1,9 +1,6 @@
 package com.github.not.n0w.islab1.model.core;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +16,7 @@ public class Discipline {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name; //Поле не может быть null, Строка не может быть пустой
+
+    @Column(name = "practice_hours")
     private Integer practiceHours; //Поле может быть null
 }

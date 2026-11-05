@@ -3,7 +3,6 @@ package com.github.not.n0w.islab1.service.impl;
 import com.github.not.n0w.islab1.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

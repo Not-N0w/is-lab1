@@ -5,12 +5,12 @@ import com.github.not.n0w.islab1.model.*;
 import com.github.not.n0w.islab1.model.core.Coordinates;
 import com.github.not.n0w.islab1.model.core.Discipline;
 import com.github.not.n0w.islab1.model.core.LabWork;
+import com.github.not.n0w.islab1.model.core.Location;
 import com.github.not.n0w.islab1.model.core.Person;
 import com.github.not.n0w.islab1.model.dto.LabWorkRequestDto;
 import com.github.not.n0w.islab1.repository.LabWorkRepository;
 import com.github.not.n0w.islab1.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,34 +24,55 @@ public class LabWorkServiceImpl implements LabWorkService {
     private final PersonService personService;
     private final DisciplineService disciplineService;
     private final CoordinatesService coordinatesService;
+    private final LocationService locationService;
 
+    private Person resolveAuthor(LabWorkRequestDto dto) {
+        Person author = dto.getAuthor();
+        if (author == null) {
+            return dto.getAuthorId() != null ? personService.getPersonById(dto.getAuthorId()) : null;
+        }
+        if (author.getId() != null) {
+            return personService.getPersonById(author.getId());
+        }
+        Location location = author.getLocation();
+        if (location != null && location.getId() != null) {
+            author.setLocation(locationService.getLocationById(location.getId()));
+        }
+        return author;
+    }
+
+    private Discipline resolveDiscipline(LabWorkRequestDto dto) {
+        Discipline discipline = dto.getDiscipline();
+        if (discipline == null) {
+            return disciplineService.getDisciplineById(dto.getDisciplineId());
+        }
+        if (discipline.getId() != null) {
+            return disciplineService.getDisciplineById(discipline.getId());
+        }
+        return discipline;
+    }
+
+    private Coordinates resolveCoordinates(LabWorkRequestDto dto) {
+        Coordinates coordinates = dto.getCoordinates();
+        if (coordinates == null) {
+            return coordinatesService.getCoordinatesById(dto.getCoordinatesId());
+        }
+        if (coordinates.getId() != null) {
+            return coordinatesService.getCoordinatesById(coordinates.getId());
+        }
+        return coordinates;
+    }
 
     private LabWork mapLabWorkRequestDtoToLabWork(LabWorkRequestDto labWorkDto) {
-        Person author = null;
-        if (labWorkDto.getAuthor() != null) {
-            author = labWorkDto.getAuthor();
-        } else if (labWorkDto.getAuthorId() != null) {
-            author = personService.getPersonById(labWorkDto.getAuthorId());
-        }
-
-        Discipline discipline = labWorkDto.isNewDiscipline()
-                ? labWorkDto.getDiscipline()
-                : disciplineService.getDisciplineById(labWorkDto.getDisciplineId());
-
-        Coordinates coordinates = labWorkDto.isNewCoordinates()
-                ? labWorkDto.getCoordinates()
-                : coordinatesService.getCoordinatesById(labWorkDto.getCoordinatesId());
-
-
         return LabWork.builder()
                 .tunedInWorks(labWorkDto.getTunedInWorks())
                 .difficulty(labWorkDto.getDifficulty())
                 .name(labWorkDto.getName())
                 .description(labWorkDto.getDescription())
-                .coordinates(coordinates)
-                .discipline(discipline)
+                .coordinates(resolveCoordinates(labWorkDto))
+                .discipline(resolveDiscipline(labWorkDto))
                 .minimalPoint(labWorkDto.getMinimalPoint())
-                .author(author)
+                .author(resolveAuthor(labWorkDto))
                 .build();
     }
 
@@ -104,16 +125,24 @@ public class LabWorkServiceImpl implements LabWorkService {
 
     @Override
     @Transactional
-    public void updateLabWork(LabWorkRequestDto labWorkDto, Integer id, boolean isDeleteStrategy) {
-        LabWork oldLabWork = getLabWorkById(id);
-        Coordinates oldCoordinates = oldLabWork.getCoordinates();
-        Discipline oldDiscipline = oldLabWork.getDiscipline();
-        Person oldAuthor = oldLabWork.getAuthor();
+    public void updateLabWork(LabWorkRequestDto dto, Integer id, boolean isDeleteStrategy) {
+        LabWork labWork = getLabWorkById(id);
+        Coordinates oldCoordinates = labWork.getCoordinates();
+        Discipline oldDiscipline = labWork.getDiscipline();
+        Person oldAuthor = labWork.getAuthor();
 
-        LabWork labWork = mapLabWorkRequestDtoToLabWork(labWorkDto);
-        labWork.setId(id);
-        labWork.setCreationDate(oldLabWork.getCreationDate());
-        labWork = labWorkRepository.save(labWork);
+        LabWork updated = mapLabWorkRequestDtoToLabWork(dto);
+
+        labWork.setName(updated.getName());
+        labWork.setDescription(updated.getDescription());
+        labWork.setDifficulty(updated.getDifficulty());
+        labWork.setMinimalPoint(updated.getMinimalPoint());
+        labWork.setTunedInWorks(updated.getTunedInWorks());
+        labWork.setCoordinates(updated.getCoordinates());
+        labWork.setDiscipline(updated.getDiscipline());
+        labWork.setAuthor(updated.getAuthor());
+
+        labWorkRepository.flush();
 
         if (isDeleteStrategy) {
             boolean isAnotherCoordinates = !Objects.equals(oldCoordinates.getId(), labWork.getCoordinates().getId());
@@ -132,6 +161,7 @@ public class LabWorkServiceImpl implements LabWorkService {
             }
         }
     }
+
     @Override
     public LabWork getLabWorkById(Integer id) {
         return labWorkRepository.findById(id)
@@ -177,10 +207,12 @@ public class LabWorkServiceImpl implements LabWorkService {
     public List<LabWork> getAllByAuthorId(Integer id) {
         return labWorkRepository.findAllByAuthor_Id(id);
     }
+
     @Override
     public List<LabWork> getAllByDisciplineId(Integer id) {
         return labWorkRepository.findAllByDiscipline_Id(id);
     }
+
     @Override
     public List<LabWork> getAllByCoordinatesId(Integer id) {
         return labWorkRepository.findAllByCoordinates_Id(id);

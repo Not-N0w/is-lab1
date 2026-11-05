@@ -2,13 +2,14 @@ package com.github.not.n0w.islab1.repository;
 
 import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.MinimalPointGroup;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface LabWorkRepository extends CrudRepository<LabWork, Integer> {
+public interface LabWorkRepository extends JpaRepository<LabWork, Integer> {
 
     @Query(value = "SELECT get_minimal_point_sum()", nativeQuery = true)
     Double getMinimalPointSum();

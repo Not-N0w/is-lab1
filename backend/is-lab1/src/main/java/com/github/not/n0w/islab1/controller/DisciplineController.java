@@ -30,7 +30,8 @@ public class DisciplineController {
     }
 
     @PatchMapping("/update/{id}")
-    public void updateDiscipline(@Valid @RequestBody DisciplineRequestDto disciplineDto, @PathVariable("id") Integer id) {
+    public void updateDiscipline(@Valid @RequestBody DisciplineRequestDto disciplineDto,
+                                 @PathVariable("id") Integer id) {
         disciplineService.updateDiscipline(disciplineDto, id);
     }
 
