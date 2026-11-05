@@ -1,15 +1,22 @@
 <div class="auth">
   <h2>Вход</h2>
 
-  <input pInputText placeholder="Логин" [(ngModel)]="username" />
-  <p-password placeholder="Пароль" [(ngModel)]="password" [feedback]="false" [toggleMask]="true" />
+  <div class="field">
+    <label for="username">Username <span class="required">*</span></label>
+    <input pInputText id="username" placeholder="Username" [(ngModel)]="username" (ngModelChange)="error.set('')" />
+  </div>
 
-  @if (error()) {
-    <p-message severity="error">{{ error() }}</p-message>
-  }
+  <div class="field">
+    <label for="password">Password <span class="required">*</span></label>
+    <p-password inputId="password" placeholder="Password" [(ngModel)]="password" (ngModelChange)="error.set('')"
+                [feedback]="false" [toggleMask]="true" />
+  </div>
+
+  <p class="required-note"><span class="required">*</span> Required field</p>
 
   <div class="buttons">
-    <p-button label="Войти" (onClick)="login()" [disabled]="!username || !password" />
-    <p-button label="Регистрация" severity="secondary" (onClick)="register()" [disabled]="!username || !password" />
+    <p-button label="Sign in" (onClick)="login()" [disabled]="!canSubmit()" [loading]="loading()" />
+    <p-button label="Sign up" severity="secondary" (onClick)="register()"
+              [disabled]="!canSubmit()" [loading]="loading()" />
   </div>
 </div>

@@ -108,8 +108,7 @@ export class EditPage implements OnInit {
 
   private send(request: Observable<void>) {
     request.subscribe({
-      next: () => this.back(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось сохранить'),
+      next: () => this.back()
     });
   }
 }

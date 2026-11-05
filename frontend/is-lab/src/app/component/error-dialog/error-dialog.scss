@@ -1,0 +1,23 @@
+.error-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  i {
+    font-size: 1.6rem;
+    color: var(--p-red-500);
+  }
+
+  p {
+    margin: 0;
+    white-space: pre-line;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+}
+
+.error-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

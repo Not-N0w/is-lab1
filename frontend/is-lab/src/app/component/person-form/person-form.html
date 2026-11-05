@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
   <div class="field">
-    <label>Name</label>
+    <label>Name <span class="required">*</span></label>
     <input pInputText formControlName="name" />
     @if (form.controls.name.touched && form.controls.name.invalid) {
       <small class="error">Name is required</small>
@@ -9,20 +9,23 @@
 
   <div class="row">
     <div class="field">
-      <label>Eye color</label>
+      <label>Eye color <span class="required">*</span></label>
       <p-select formControlName="eyeColor" [options]="colors" placeholder="Not selected" appendTo="body" />
+      @if (form.controls.eyeColor.touched && form.controls.eyeColor.invalid) {
+        <small class="error">Eye color is required</small>
+      }
     </div>
 
     <div class="field">
       <label>Hair color</label>
-      <p-select formControlName="hairColor" [options]="colors" [showClear]="true"
-                placeholder="Not selected" appendTo="body" />
+      <p-select formControlName="hairColor" [options]="nullableColors" optionLabel="label" optionValue="value"
+                placeholder="Not specified" appendTo="body" />
     </div>
   </div>
 
   <div class="row">
     <div class="field">
-      <label>Height</label>
+      <label>Height <span class="required">*</span></label>
       <input pInputText type="number" formControlName="height" />
       @if (form.controls.height.touched && form.controls.height.invalid) {
         <small class="error">Must be greater than 0</small>
@@ -31,13 +34,13 @@
 
     <div class="field">
       <label>Nationality</label>
-      <p-select formControlName="nationality" [options]="countries" [showClear]="true"
-                placeholder="Not selected" appendTo="body" />
+      <p-select formControlName="nationality" [options]="nullableCountries" optionLabel="label" optionValue="value"
+                placeholder="Not specified" appendTo="body" />
     </div>
   </div>
 
   <div class="field">
-    <label>Location</label>
+    <label>Location <span class="required">*</span></label>
     <div class="picker">
       @if (form.controls.location.value; as l) {
         <span class="value">{{ locationLabel(l) }}</span>
@@ -48,6 +51,8 @@
       <p-button icon="pi pi-plus" [text]="true" (onClick)="newLocationVisible.set(true)" />
     </div>
   </div>
+
+  <p class="required-note"><span class="required">*</span> Required field</p>
 
   <div class="actions">
     <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />

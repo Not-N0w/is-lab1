@@ -67,8 +67,7 @@ export class CreatePage {
 
   private send(request: Observable<void>) {
     request.subscribe({
-      next: () => this.back(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось создать'),
+      next: () => this.back()
     });
   }
 }

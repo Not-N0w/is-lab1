@@ -23,6 +23,15 @@ export class PersonForm {
   protected colors: Color[] = ['RED', 'BLUE', 'ORANGE', 'WHITE'];
   protected countries: Country[] = ['USA', 'SPAIN', 'SOUTH_KOREA', 'NORTH_KOREA'];
 
+  protected nullableColors: { label: string; value: Color | null }[] = [
+    { label: 'Not specified', value: null },
+    ...this.colors.map((c) => ({ label: c, value: c })),
+  ];
+  protected nullableCountries: { label: string; value: Country | null }[] = [
+    { label: 'Not specified', value: null },
+    ...this.countries.map((c) => ({ label: c, value: c })),
+  ];
+
   protected existingLocationVisible = signal(false);
   protected newLocationVisible = signal(false);
 
@@ -54,6 +63,12 @@ export class PersonForm {
 
   protected submit() {
     if (this.form.invalid) return;
-    this.saved.emit({ ...this.initial(), ...this.form.getRawValue() } as Person);
+    const value = this.form.getRawValue();
+    this.saved.emit({
+      ...this.initial(),
+      ...value,
+      hairColor: value.hairColor ?? null,
+      nationality: value.nationality ?? null,
+    } as Person);
   }
 }

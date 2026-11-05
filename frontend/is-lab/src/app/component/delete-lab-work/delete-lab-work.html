@@ -1,12 +1,12 @@
 <div class="body">
-  <p>Удалить лабораторную «{{ target().name }}»?</p>
+  <p>Delete lab work "{{ target().name }}"?</p>
 
-  <p class="hint">Что сделать со связанными coordinates, discipline и author, если на них больше никто не ссылается:</p>
+  <p class="hint">What to do with the related coordinates, discipline and author if they are no longer referenced:</p>
   <p-selectbutton [options]="strategies" [(ngModel)]="strategy"
                   optionLabel="label" optionValue="value" [allowEmpty]="false" />
 
   <div class="actions">
-    <p-button label="Отмена" severity="secondary" (onClick)="cancel.emit()" />
-    <p-button label="Удалить" severity="danger" (onClick)="confirm()" />
+    <p-button label="Cancel" severity="secondary" (onClick)="cancel.emit()" />
+    <p-button label="Delete" severity="danger" (onClick)="confirm()" />
   </div>
 </div>

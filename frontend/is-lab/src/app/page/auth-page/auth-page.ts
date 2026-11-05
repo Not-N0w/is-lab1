@@ -1,11 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { AuthService } from '../../service/AuthService';
+import { serverErrorMessage } from '../../service/error.service';
 
 @Component({
   selector: 'app-auth-page',
@@ -20,18 +22,32 @@ export class AuthPage {
   username = '';
   password = '';
   error = signal('');
+  loading = signal(false);
+
+  canSubmit() {
+    return this.username.trim() !== '' && this.password !== '' && !this.loading();
+  }
 
   login() {
-    this.authService.login({ username: this.username, password: this.password }).subscribe({
-      next: () => this.router.navigate(['/labworks']),
-      error: () => this.error.set('Неверный логин или пароль'),
-    });
+    this.send(this.authService.login({ username: this.username.trim(), password: this.password }));
   }
 
   register() {
-    this.authService.register({ username: this.username, password: this.password }).subscribe({
-      next: () => this.router.navigate(['/labworks']),
-      error: () => this.error.set('Не удалось зарегистрироваться'),
+    this.send(this.authService.register({ username: this.username.trim(), password: this.password }));
+  }
+
+  private send(request: Observable<unknown>) {
+    this.error.set('');
+    this.loading.set(true);
+    request.subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.router.navigate(['/labworks']);
+      },
+      error: (e) => {
+        this.loading.set(false);
+        this.error.set(serverErrorMessage(e));
+      },
     });
   }
 }

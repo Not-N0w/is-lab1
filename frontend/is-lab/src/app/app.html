@@ -5,10 +5,11 @@
         <div class="user">
           <i class="pi pi-user"></i>
           <span>{{ authService.username() }}</span>
-          <p-button label="Выйти" icon="pi pi-sign-out" severity="secondary" [text]="true" (onClick)="logout()" />
+          <p-button label="Logout" icon="pi pi-sign-out" severity="secondary" [text]="true" (onClick)="logout()" />
         </div>
       </ng-template>
     </p-menubar>
   }
   <router-outlet />
 </div>
+<app-error-dialog />

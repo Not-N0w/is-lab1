@@ -11,10 +11,6 @@ export class AuthService {
 
   username = signal<string | null>(null);
 
-  constructor() {
-    if (this.isAuthenticated()) this.loadName();
-  }
-
   login(request: AuthRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.url}/login`, request)

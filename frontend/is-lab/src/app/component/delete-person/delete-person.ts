@@ -65,9 +65,6 @@ export class DeletePerson implements OnInit {
   }
 
   private deleteTarget() {
-    this.personService.deletePerson(this.target().id!, this.strategy).subscribe({
-      next: () => this.deleted.emit(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось удалить'),
-    });
+    this.personService.deletePerson(this.target().id!, this.strategy).subscribe(() => this.deleted.emit());
   }
 }

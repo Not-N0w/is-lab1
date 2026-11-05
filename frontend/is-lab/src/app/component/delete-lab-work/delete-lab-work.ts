@@ -25,9 +25,6 @@ export class DeleteLabWork {
   ];
 
   protected confirm() {
-    this.labWorkService.deleteLabWork(this.target().id!, this.strategy).subscribe({
-      next: () => this.deleted.emit(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось удалить'),
-    });
+    this.labWorkService.deleteLabWork(this.target().id!, this.strategy).subscribe(() => this.deleted.emit());
   }
 }

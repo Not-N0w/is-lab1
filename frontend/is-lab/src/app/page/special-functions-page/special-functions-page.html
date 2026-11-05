@@ -6,18 +6,18 @@
   </ng-template>
 
   <section>
-    <h3>Сумма minimalPoint</h3>
-    <p-button label="Рассчитать" (onClick)="loadSum()" />
-    @if (sum() !== null) { <p>Сумма: <b>{{ sum() }}</b></p> }
+    <h3>Sum of minimalPoint</h3>
+    <p-button label="Calculate" (onClick)="loadSum()" />
+    @if (sum() !== null) { <p>Sum: <b>{{ sum() }}</b></p> }
     <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['sum'] }" />
   </section>
 
   <section>
-    <h3>Группировка по minimalPoint</h3>
-    <p-button label="Сгруппировать" (onClick)="loadGroups()" />
+    <h3>Group by minimalPoint</h3>
+    <p-button label="Group" (onClick)="loadGroups()" />
     @if (groups(); as g) {
       <table>
-        <tr><th>minimalPoint</th><th>Количество</th></tr>
+        <tr><th>minimalPoint</th><th>Count</th></tr>
         @for (row of g; track row.minimalPoints) {
           <tr><td>{{ row.minimalPoints }}</td><td>{{ row.count }}</td></tr>
         }
@@ -27,31 +27,31 @@
   </section>
 
   <section>
-    <h3>Уникальные авторы</h3>
-    <p-button label="Показать" (onClick)="loadAuthors()" />
+    <h3>Unique authors</h3>
+    <p-button label="Show" (onClick)="loadAuthors()" />
     @if (authors(); as a) {
       <ul>
-        @for (id of a; track id) { <li>Автор #{{ id }}</li> } @empty { <li>Авторов нет</li> }
+        @for (id of a; track id) { <li>Author #{{ id }}</li> } @empty { <li>No authors</li> }
       </ul>
     }
     <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['authors'] }" />
   </section>
 
   <section>
-    <h3>Добавить лабораторную в программу дисциплины</h3>
+    <h3>Add a lab work to a discipline's program</h3>
     <div class="inputs">
-      <input pInputText type="number" placeholder="ID лабораторной" [(ngModel)]="labId" />
-      <input pInputText type="number" placeholder="ID дисциплины" [(ngModel)]="disciplineId" />
-      <p-button label="Добавить" [disabled]="!labId || !disciplineId" (onClick)="addLab()" />
+      <input pInputText type="number" placeholder="Lab work ID" [(ngModel)]="labId" />
+      <input pInputText type="number" placeholder="Discipline ID" [(ngModel)]="disciplineId" />
+      <p-button label="Add" [disabled]="!labId || !disciplineId" (onClick)="addLab()" />
     </div>
     <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['addLab'] }" />
   </section>
 
   <section>
-    <h3>Добавить 10 самых сложных лабораторных в дисциплину</h3>
+    <h3>Add the 10 hardest lab works to a discipline</h3>
     <div class="inputs">
-      <input pInputText type="number" placeholder="ID дисциплины" [(ngModel)]="topDisciplineId" />
-      <p-button label="Добавить" [disabled]="!topDisciplineId" (onClick)="addTop()" />
+      <input pInputText type="number" placeholder="Discipline ID" [(ngModel)]="topDisciplineId" />
+      <p-button label="Add" [disabled]="!topDisciplineId" (onClick)="addTop()" />
     </div>
     <ng-container *ngTemplateOutlet="statusTpl; context: { $implicit: status()['addTop'] }" />
   </section>

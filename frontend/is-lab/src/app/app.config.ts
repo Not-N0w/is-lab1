@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { FilterService } from 'primeng/api';
 import { authInterceptor } from './interceptor/auth-interceptor';
+import { errorInterceptor } from './interceptor/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,6 +25,6 @@ export const appConfig: ApplicationConfig = {
       );
     }),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
   ],
 };

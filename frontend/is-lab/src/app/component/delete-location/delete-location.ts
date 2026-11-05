@@ -64,9 +64,6 @@ export class DeleteLocation implements OnInit {
   }
 
   private deleteTarget() {
-    this.locationService.deleteLocation(this.target().id!).subscribe({
-      next: () => this.deleted.emit(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось удалить'),
-    });
+    this.locationService.deleteLocation(this.target().id!).subscribe(() => this.deleted.emit());
   }
 }

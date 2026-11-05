@@ -55,6 +55,16 @@
     padding-left: 5px;
   }
 
+  .required {
+    color: var(--p-red-500);
+  }
+
+  .required-note {
+    margin: 0;
+    font-size: 12px;
+    color: #818080;
+  }
+
   .actions {
     display: flex;
     justify-content: flex-end;

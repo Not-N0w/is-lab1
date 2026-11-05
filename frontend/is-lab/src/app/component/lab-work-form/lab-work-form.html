@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
   <div class="field">
-    <label>Name</label>
+    <label>Name <span class="required">*</span></label>
     <input pInputText formControlName="name" />
     @if (form.controls.name.touched && form.controls.name.invalid) {
       <small class="error">Name is required</small>
@@ -15,7 +15,7 @@
 
   <div class="row">
     <div class="field">
-      <label>Minimal point</label>
+      <label>Minimal point <span class="required">*</span></label>
       <input pInputText type="number" formControlName="minimalPoint" />
       @if (form.controls.minimalPoint.touched && form.controls.minimalPoint.invalid) {
         <small class="error">Must be greater than 0</small>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="field">
-      <label>Tuned in works</label>
+      <label>Tuned in works <span class="required">*</span></label>
       <input pInputText type="number" formControlName="tunedInWorks" />
       @if (form.controls.tunedInWorks.touched && form.controls.tunedInWorks.invalid) {
         <small class="error">Integer is required</small>
@@ -37,7 +37,7 @@
   </div>
 
   <div class="field">
-    <label>Coordinates</label>
+    <label>Coordinates <span class="required">*</span></label>
     <div class="picker">
       @if (form.controls.coordinates.value; as c) {
         <span class="value">{{ label(c.id, '(' + c.x + ', ' + c.y + ')') }}</span>
@@ -50,7 +50,7 @@
   </div>
 
   <div class="field">
-    <label>Discipline</label>
+    <label>Discipline <span class="required">*</span></label>
     <div class="picker">
       @if (form.controls.discipline.value; as d) {
         <span class="value">{{ label(d.id, d.name) }}</span>
@@ -74,6 +74,8 @@
       <p-button icon="pi pi-plus" [text]="true" (onClick)="newAuthorVisible.set(true)" />
     </div>
   </div>
+
+  <p class="required-note"><span class="required">*</span> Required field</p>
 
   <div class="actions">
     <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />

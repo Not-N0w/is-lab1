@@ -1,7 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
   <div class="row">
     <div class="field">
-      <label>X</label>
+      <label>X <span class="required">*</span></label>
       <input pInputText type="number" formControlName="x" />
       @if (form.controls.x.touched && form.controls.x.invalid) {
         <small class="error">Integer greater than -212</small>
@@ -9,13 +9,15 @@
     </div>
 
     <div class="field">
-      <label>Y</label>
+      <label>Y <span class="required">*</span></label>
       <input pInputText type="number" formControlName="y" />
       @if (form.controls.y.touched && form.controls.y.invalid) {
         <small class="error">Integer is required</small>
       }
     </div>
   </div>
+
+  <p class="required-note"><span class="required">*</span> Required field</p>
 
   <div class="actions">
     <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />

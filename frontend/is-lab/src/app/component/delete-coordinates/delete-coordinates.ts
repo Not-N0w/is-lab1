@@ -59,9 +59,6 @@ export class DeleteCoordinates implements OnInit {
   }
 
   private deleteTarget() {
-    this.coordinatesService.deleteCoordinates(this.target().id!).subscribe({
-      next: () => this.deleted.emit(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось удалить'),
-    });
+    this.coordinatesService.deleteCoordinates(this.target().id!).subscribe(() => this.deleted.emit());
   }
 }

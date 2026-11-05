@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="submit()" class="entity-form">
   <div class="field">
-    <label>Name</label>
+    <label>Name <span class="required">*</span></label>
     <input pInputText formControlName="name" />
     @if (form.controls.name.touched && form.controls.name.invalid) {
       <small class="error">Name is required</small>
@@ -14,6 +14,8 @@
       <small class="error">Must be an integer</small>
     }
   </div>
+
+  <p class="required-note"><span class="required">*</span> Required field</p>
 
   <div class="actions">
     <p-button type="submit" [label]="submitLabel()" [disabled]="form.invalid" />

@@ -4,10 +4,11 @@ import { FilterService, MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { Button } from 'primeng/button';
 import { AuthService } from './service/AuthService';
+import { ErrorDialog } from './component/error-dialog/error-dialog';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Menubar, Button],
+  imports: [RouterOutlet, Menubar, Button, ErrorDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -24,6 +25,9 @@ export class App {
         filter === '' ||
         String(value) === String(filter),
     );
+    if (this.authService.isAuthenticated()) {
+      this.authService.loadName();
+    }
   }
 
   protected items: MenuItem[] = [

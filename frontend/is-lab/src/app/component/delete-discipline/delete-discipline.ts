@@ -59,9 +59,6 @@ export class DeleteDiscipline implements OnInit {
   }
 
   private deleteTarget() {
-    this.disciplineService.deleteDiscipline(this.target().id!).subscribe({
-      next: () => this.deleted.emit(),
-      error: (e) => alert(e.error?.message ?? 'Не удалось удалить'),
-    });
+    this.disciplineService.deleteDiscipline(this.target().id!).subscribe(() => this.deleted.emit());
   }
 }
