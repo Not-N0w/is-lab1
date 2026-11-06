@@ -14,6 +14,8 @@ services:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
   tomcat:
+    cpus: 4
+    mem_limit: 8g
     build:
       context: ./backend
       dockerfile: tomcat/Dockerfile
