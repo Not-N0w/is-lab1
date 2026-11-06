@@ -1,10 +1,7 @@
 services:
   db:
     image: postgres
-    environment:
-      POSTGRES_DB: "studs"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+    env_file: "env/db.env"
     ports:
       - "5432:5432"
     healthcheck:
@@ -15,3 +12,14 @@ services:
       timeout: 10s
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  tomcat:
+    build:
+      context: ./backend
+      dockerfile: tomcat/Dockerfile
+    env_file: "env/backend.env"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
