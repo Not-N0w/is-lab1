@@ -8,10 +8,9 @@ import com.github.not.n0w.islab1.model.dto.DisciplineRequestDto;
 import com.github.not.n0w.islab1.repository.DisciplineRepository;
 import com.github.not.n0w.islab1.repository.LabWorkRepository;
 import com.github.not.n0w.islab1.service.DisciplineService;
-import com.github.not.n0w.islab1.service.LabWorkService;
-import com.github.not.n0w.islab1.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

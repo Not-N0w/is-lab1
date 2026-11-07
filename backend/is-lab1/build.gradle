@@ -55,5 +55,6 @@ dependencies {
     implementation 'org.springframework:spring-aop:7.1.0-RC1'
     implementation 'org.aspectj:aspectjweaver:1.9.26'
 
-}
+    implementation 'org.springframework.data:spring-data-redis:4.2.0-RC1'
+    implementation 'io.lettuce:lettuce-core:7.9.0.RELEASE'}
 

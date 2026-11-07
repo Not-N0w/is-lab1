@@ -4,7 +4,7 @@ set -u
 BASE_URL="${1:-http://localhost:8080}"
 USERNAME="${2:-test}"
 PASSWORD="${3:-test}"
-COUNT="${4:-40}"
+COUNT="${4:-1000}"
 
 AUTH="{\"username\":\"$USERNAME\",\"password\":\"$PASSWORD\"}"
 
