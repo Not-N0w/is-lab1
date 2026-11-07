@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PersonRequestDto {
-    @NotBlank
+    @NotBlank(message = "Name must not be empty")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Eye color is required")
     private Color eyeColor;
 
     private Color hairColor;
@@ -28,20 +28,16 @@ public class PersonRequestDto {
     private Location location;
     private Integer locationId;
 
-    @NotNull
-    @Min(value = 1, message = "Age must be greater than 0")
+    @NotNull(message = "Height is required")
+    @Positive(message = "Height must be greater than 0")
     private Float height;
 
-    @NotNull
     private Country nationality;
 
     @JsonIgnore
-    @AssertTrue(message = "Location are required")
+    @AssertTrue(message = "Location is required")
     public boolean isLocationPresent() {
         return location != null || locationId != null;
     }
 
-    public boolean isNewLocation() {
-        return (locationId == null || location != null);
-    }
 }

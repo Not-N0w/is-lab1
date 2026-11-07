@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.validation.Valid;
 import lombok.NoArgsConstructor;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -53,18 +54,5 @@ public class LabWorkRequestDto {
         return discipline != null || disciplineId != null;
     }
 
-    @JsonIgnore
-    public boolean isNewCoordinates() {
-        return coordinatesId == null || coordinates != null;
-    }
 
-    @JsonIgnore
-    public boolean isNewDiscipline() {
-        return disciplineId == null || discipline != null;
-    }
-
-    @JsonIgnore
-    public boolean isNewAuthor() {
-        return authorId == null || author != null;
-    }
 }
