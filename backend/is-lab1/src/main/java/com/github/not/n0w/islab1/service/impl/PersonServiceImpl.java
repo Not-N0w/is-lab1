@@ -11,8 +11,12 @@ import com.github.not.n0w.islab1.repository.PersonRepository;
 import com.github.not.n0w.islab1.service.LocationService;
 import com.github.not.n0w.islab1.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,28 +27,37 @@ public class PersonServiceImpl implements PersonService {
     private final LabWorkRepository labWorkRepository;
     private final LocationService locationService;
 
+    private Location resolveLocation(PersonRequestDto dto) {
+        Location location = dto.getLocation();
+        if (location == null) {
+            return locationService.getLocationById(dto.getLocationId());
+        }
+        if (location.getId() != null) {
+            return locationService.getLocationById(location.getId());
+        }
+        return location;
+    }
+
     @Override
     @Transactional
+    @CacheEvict(value = {"persons"}, allEntries = true)
     public void createPerson(PersonRequestDto personDto) {
-        Location location = personDto.isNewLocation()
-                ? personDto.getLocation()
-                : locationService.getLocationById(personDto.getLocationId());
-
         Person person = Person.builder()
                 .name(personDto.getName())
                 .eyeColor(personDto.getEyeColor())
                 .hairColor(personDto.getHairColor())
                 .nationality(personDto.getNationality())
                 .height(personDto.getHeight())
-                .location(location)
+                .location(resolveLocation(personDto))
                 .build();
 
         personRepository.save(person);
     }
 
     @Override
+    @Cacheable(value = "persons", key = "'all'")
     public List<Person> getAllPersons() {
-        return (List<Person>) personRepository.findAll();
+        return new ArrayList<>((List<Person>) personRepository.findAll());
     }
 
     @Override
@@ -66,29 +79,29 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"persons"}, allEntries = true)
     public void deletePerson(Integer id, boolean isDeleteStrategy) {
         Person person = getPersonById(id);
         if (!labWorkRepository.findAllByAuthor_Id(id).isEmpty()) {
             throw new ConflictException("Person with id=" + id + " is an author of lab works. Reassign them first");
         }
 
-        boolean isLocationRetained = isLocationRetained(id, person.getLocation().getId());
+        Integer locationId = person.getLocation().getId();
+        boolean isLocationRetained = isLocationRetained(id, locationId);
 
         personRepository.delete(person);
         if (isDeleteStrategy && isLocationRetained) {
-            locationService.deleteLocation(person.getLocation().getId());
+            locationService.deleteLocation(locationId);
         }
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = {"persons", "labWorks"}, allEntries = true)
     public void updatePerson(PersonRequestDto person, Integer id, boolean isDeleteStrategy) {
         Person personEntity = getPersonById(id);
         Location oldLocation = personEntity.getLocation();
-
-        Location location = person.isNewLocation()
-                ? person.getLocation()
-                : locationService.getLocationById(person.getLocationId());
+        Location location = resolveLocation(person);
 
         personEntity.setLocation(location);
         personEntity.setName(person.getName());
@@ -96,7 +109,7 @@ public class PersonServiceImpl implements PersonService {
         personEntity.setHairColor(person.getHairColor());
         personEntity.setNationality(person.getNationality());
         personEntity.setHeight(person.getHeight());
-        personRepository.save(personEntity);
+        personRepository.saveAndFlush(personEntity);
 
         boolean isAnotherLocation = !Objects.equals(oldLocation.getId(), location.getId());
         if (isDeleteStrategy && isAnotherLocation && getPersonsByLocationId(oldLocation.getId()).isEmpty()) {
