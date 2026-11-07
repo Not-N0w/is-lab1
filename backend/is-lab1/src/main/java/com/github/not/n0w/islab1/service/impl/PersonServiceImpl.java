@@ -11,8 +11,6 @@ import com.github.not.n0w.islab1.repository.PersonRepository;
 import com.github.not.n0w.islab1.service.LocationService;
 import com.github.not.n0w.islab1.service.PersonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +38,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"persons"}, allEntries = true)
     public void createPerson(PersonRequestDto personDto) {
         Person person = Person.builder()
                 .name(personDto.getName())
@@ -55,7 +52,6 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    @Cacheable(value = "persons", key = "'all'")
     public List<Person> getAllPersons() {
         return new ArrayList<>((List<Person>) personRepository.findAll());
     }
@@ -79,7 +75,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"persons"}, allEntries = true)
     public void deletePerson(Integer id, boolean isDeleteStrategy) {
         Person person = getPersonById(id);
         if (!labWorkRepository.findAllByAuthor_Id(id).isEmpty()) {
@@ -97,7 +92,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"persons", "labWorks"}, allEntries = true)
     public void updatePerson(PersonRequestDto person, Integer id, boolean isDeleteStrategy) {
         Person personEntity = getPersonById(id);
         Location oldLocation = personEntity.getLocation();
