@@ -1,13 +1,14 @@
 package com.github.not.n0w.islab1.service.impl;
 
 import com.github.not.n0w.islab1.exception.NotFoundException;
-import com.github.not.n0w.islab1.model.*;
 import com.github.not.n0w.islab1.model.core.Coordinates;
 import com.github.not.n0w.islab1.model.core.Discipline;
 import com.github.not.n0w.islab1.model.core.LabWork;
 import com.github.not.n0w.islab1.model.core.Location;
 import com.github.not.n0w.islab1.model.core.Person;
 import com.github.not.n0w.islab1.model.dto.LabWorkRequestDto;
+import com.github.not.n0w.islab1.model.ext.MinimalPointCount;
+import com.github.not.n0w.islab1.model.ext.MinimalPointGroup;
 import com.github.not.n0w.islab1.repository.LabWorkRepository;
 import com.github.not.n0w.islab1.service.*;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +82,7 @@ public class LabWorkServiceImpl implements LabWorkService {
 
     @Transactional
     @Override
-    @CacheEvict(value = {"labWorks", "persons"}, allEntries = true)
+    @CacheEvict(value = {"labWorks", "persons", "specialOps"}, allEntries = true)
     public void createLabWork(LabWorkRequestDto labWorkDto) {
         LabWork labWork = mapLabWorkRequestDtoToLabWork(labWorkDto);
         labWorkRepository.save(labWork);
@@ -104,7 +105,7 @@ public class LabWorkServiceImpl implements LabWorkService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "labWorks", allEntries = true)
+    @CacheEvict(value = {"labWorks", "specialOps"}, allEntries = true)
     public void deleteLabWork(Integer id, boolean isDeleteStrategy) {
         LabWork labWork = getLabWorkById(id);
         Coordinates coordinates = labWork.getCoordinates();
@@ -130,7 +131,7 @@ public class LabWorkServiceImpl implements LabWorkService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"labWorks", "persons"}, allEntries = true)
+    @CacheEvict(value = {"labWorks", "persons", "specialOps"}, allEntries = true)
     public void updateLabWork(LabWorkRequestDto dto, Integer id, boolean isDeleteStrategy) {
         LabWork labWork = getLabWorkById(id);
         Coordinates oldCoordinates = labWork.getCoordinates();
@@ -182,7 +183,7 @@ public class LabWorkServiceImpl implements LabWorkService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"labWorks"}, allEntries = true)
+    @CacheEvict(value = {"labWorks", "specialOps"}, allEntries = true)
     public void addLabToDiscipline(Integer labId, Integer disciplineId) {
         getLabWorkById(labId);
         disciplineService.getDisciplineById(disciplineId);
@@ -191,23 +192,30 @@ public class LabWorkServiceImpl implements LabWorkService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"labWorks"}, allEntries = true)
+    @CacheEvict(value = {"labWorks", "specialOps"}, allEntries = true)
     public void addTopLabsToDiscipline(Integer disciplineId) {
         disciplineService.getDisciplineById(disciplineId);
         labWorkRepository.addTopLabsToDiscipline(disciplineId);
     }
 
     @Override
+    @Cacheable(value = "specialOps", key = "'minimalPointSum'", unless = "#result == null")
     public Double getSumOfMinimalPoints() {
         return labWorkRepository.getMinimalPointSum();
     }
 
     @Override
+    @Cacheable(value = "specialOps", key = "'countByMinimalPoint'")
     public List<MinimalPointGroup> countByMinimalPoint() {
-        return new ArrayList<>(labWorkRepository.countByMinimalPoint());
+        List<MinimalPointGroup> result = new ArrayList<>();
+        for (MinimalPointGroup g : labWorkRepository.countByMinimalPoint()) {
+            result.add(new MinimalPointCount(g.getMinimalPoints(), g.getCount()));
+        }
+        return result;
     }
 
     @Override
+    @Cacheable(value = "specialOps", key = "'uniqueAuthors'")
     public List<Integer> getUniqueAuthors() {
         return new ArrayList<>(labWorkRepository.getUniqueAuthorIds());
     }

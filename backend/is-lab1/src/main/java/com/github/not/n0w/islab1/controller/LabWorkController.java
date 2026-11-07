@@ -1,10 +1,9 @@
 package com.github.not.n0w.islab1.controller;
 
 import com.github.not.n0w.islab1.model.core.LabWork;
-import com.github.not.n0w.islab1.model.MinimalPointGroup;
+import com.github.not.n0w.islab1.model.ext.MinimalPointGroup;
 import com.github.not.n0w.islab1.model.dto.LabWorkRequestDto;
 import com.github.not.n0w.islab1.service.LabWorkService;
-import com.github.not.n0w.islab1.service.WebSocketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

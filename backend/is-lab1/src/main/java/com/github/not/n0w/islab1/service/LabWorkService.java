@@ -1,7 +1,7 @@
 package com.github.not.n0w.islab1.service;
 
 import com.github.not.n0w.islab1.model.core.LabWork;
-import com.github.not.n0w.islab1.model.MinimalPointGroup;
+import com.github.not.n0w.islab1.model.ext.MinimalPointGroup;
 import com.github.not.n0w.islab1.model.dto.LabWorkRequestDto;
 
 import java.util.List;
