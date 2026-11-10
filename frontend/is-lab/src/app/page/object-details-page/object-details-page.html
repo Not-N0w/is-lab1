@@ -3,7 +3,7 @@
     <div class="header">
       <h2>{{ title() }} #{{ id() }}</h2>
       <div class="buttons">
-        <p-button label="Назад" icon="pi pi-arrow-left" severity="secondary" [text]="true" (onClick)="back()" />
+        <p-button label="Back" icon="pi pi-arrow-left" severity="secondary" [text]="true" (onClick)="back()" />
         <p-button label="Edit" icon="pi pi-pencil" [routerLink]="['/' + entity(), id(), 'edit']" />
         <p-button label="Delete" icon="pi pi-trash" severity="danger" [disabled]="!object()"
                   (onClick)="deleteVisible.set(true)" />
